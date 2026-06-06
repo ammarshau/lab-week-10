@@ -87,14 +87,15 @@ The vulnerability was manually validated using Nmap's ssl-enum-ciphers script ag
 | **4** | **NFS Exported Share Disclosure** | **Exploitability:** High. Simple native Linux commands (`showmount -e`) can mount the drive.<br>**Impact:** Data exposure. Filesystem access depends on directory permissions.<br>**Exposure:** Open on RPC/NFS ports (2049). |
 | **5** | **SSL V2/V3 Protocols (PostgreSQL)** | **Exploitability:** Low to Medium. Requires a Man-in-the-Middle (MitM) network position to intercept traffic over time.<br>**Impact:** Traffic decryption / Session hijacking.<br>**Exposure:** Bound to the local database connection stream (5432). |
 
-### 2. Remediation Priority Plan
+| Priority & Timeline | Vulnerability Name & Target Port | Risk Context | Remediation Action Plan |
+| :--- | :--- | :--- | :--- |
+| **1. Immediate** <br>*(Within 1 Hour)* | **VNC Server Default Password** <br>`Port 5900` | Trivial authentication bypass granting an attacker immediate graphical administrative root control over the system without exploitation skills. | 1. Access the target terminal and execute the `vncpasswd` command.<br>2. Update the default credential `password` to a unique, complex administrative passphrase.<br>3. Restrict incoming traffic on port 5900 via host firewalls (`iptables`/`ufw`) to trusted source subnets only. |
+| **2. Urgent** <br>*(Within 24 Hours)* | **UnrealIRCd Backdoor Detection** <br>`Port 6667` | Target runs a compromised software build containing a malicious embedded macro backdoor that allows unauthenticated remote command execution. | 1. Terminate the active running process of the compromised IRC daemon.<br>2. Decommission the vulnerable binary package.<br>3. Download and deploy a clean, verified release version (`v3.2.8.2` or later) from the official vendor repository, validating hashes before compilation. |
+| **3. High** <br>*(Within 72 Hours)* | **Apache Tomcat AJP Connector (Ghostcat)** <br>`Port 8009` | Improper input validation on the trusted binary connector protocol allowing unauthenticated remote arbitrary file reading and potential code injection. | 1. Open the Tomcat web container configuration file at `/conf/server.xml`.<br>2. Locate the AJP connector definition block and alter the interface binding from wildcard `0.0.0.0` to localhost loopback `address="127.0.0.1"`.<br>3. Implement explicit authentication tokens by defining the `requiredSecret` parameter variable. |
+| **4. Medium** <br>*(Within 1 Week)* | **NFS Exported Share Disclosure** <br>`Port 2049` | Overly permissive file share configuration exporting core target directory structures to a global wildcard scope with absolute privileges. | 1. Modify the storage export mapping rules blueprint file at `/etc/exports`.<br>2. Strip the permissive `*` global wildcard property from sensitive directory directories.<br>3. Bind mount access rules explicitly to authorized internal network segments or distinct system IPs.<br>4. Apply the `root_squash` variable parameter to block client action mapping to absolute administrative permission roots, then reload via `sudo exportfs -ra`. |
+| **5. Low** <br>*(Within 1 Month)* | **SSL V2/V3 Protocols Support** <br>`Port 5432` *(PostgreSQL)* | The backend database service negotiates connections using obsolete, cryptographically broken protocol primitives susceptible to traffic interception and decryption. | 1. Edit the core engine parameters configuration document inside `/etc/postgresql/X.X/main/postgresql.conf`.<br>2. Modify the security protocol suites string to explicitly drop legacy parameters.<br>3. Hard-code server directives to restrict traffic negotiations strictly to modern `TLSv1.2` or `TLSv1.3` cryptographic baselines.<br>4. Safely apply changes with `sudo systemctl restart postgresql`. |
 
-```mermaid
-graph TD
-    A[1. VNC Default Password: Fix < 1 Hour] --> B[2. UnrealIRCd Backdoor: Fix < 24 Hours]
-    B --> C[3. Tomcat Ghostcat: Fix < 72 Hours]
-    C --> D[4. NFS Export Share: Fix < 1 Week]
-    D --> E[5. PostgreSQL SSL V2/V3: Fix < 1 Month]
 
 WHY a Medium CVSS may be more dangerous than a High
 Because the Medium vulnerability is weaponized, trivial to run, and sits directly on high-value data, it poses an immediate operational threat. The high vulnerability, while theoretically devastating, remains unexploitable due to environmental isolation and lack of available tooling. This is why automated severity rankings must always be filtered through a risk analyst's eyes.
+
