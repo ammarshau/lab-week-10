@@ -87,5 +87,6 @@ The vulnerability was manually validated using Nmap's ssl-enum-ciphers script ag
 
 
 WHY a Medium CVSS may be more dangerous than a High
+
 Because the Medium vulnerability is weaponized, trivial to run, and sits directly on high-value data, it poses an immediate operational threat. The high vulnerability, while theoretically devastating, remains unexploitable due to environmental isolation and lack of available tooling. This is why automated severity rankings must always be filtered through a risk analyst's eyes.
 
