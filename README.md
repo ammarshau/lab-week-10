@@ -69,42 +69,8 @@ Detailed manual lookup and structural correlation of findings to determine envir
 ### Manual Verification Output
 To ensure findings were true operational risks rather than scanner misinterpretations, an active Nmap verification scan was conducted against the target environment:
 
-```text
-5432/tcp open postgresql PostgreSQL DB 8.3.0 - 8.3.7
-| ssl-enum-ciphers:
-|   SSLv3:
-|     ciphers:
-|       TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA (dh 1024) - F
-|       TLS_DHE_RSA_WITH_AES_128_CBC_SHA (dh 1024) - F
-|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA (dh 1024) - F
-|       TLS_RSA_WITH_3DES_EDE_CBC_SHA (rsa 1024) - F
-|       TLS_RSA_WITH_AES_128_CBC_SHA (rsa 1024) - F
-|       TLS_RSA_WITH_AES_256_CBC_SHA (rsa 1024) - F
-|       TLS_RSA_WITH_RC4_128_SHA (rsa 1024) - F
-|     compressors:
-|       DEFLATE
-|       NULL
-|     cipher preference: client
-|     warnings:
-|       64-bit block cipher 3DES vulnerable to SWEET32 attack
-|       Broken cipher RC4 is deprecated by RFC 7465
-|       CBC-mode cipher in SSLv3 (CVE-2014-3566)
-|       Insecure certificate signature (SHA1), score capped at F
-|   TLSv1.0:
-|     ciphers:
-|       TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA (dh 1024) - F
-|       TLS_DHE_RSA_WITH_AES_128_CBC_SHA (dh 1024) - F
-|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA (dh 1024) - F
-|       TLS_RSA_WITH_3DES_EDE_CBC_SHA (rsa 1024) - F
-|       TLS_RSA_WITH_AES_128_CBC_SHA (rsa 1024) - F
-|       TLS_RSA_WITH_AES_256_CBC_SHA (rsa 1024) - F
-|       TLS_RSA_WITH_RC4_128_SHA (rsa 1024) - F
-|     compressors:
-|       DEFLATE
-|       NULL
-|     cipher preference: client
-|     warnings:
-|       64-bit block cipher 3DES vulnerable to SWEET32 attack
-|       Broken cipher RC4 is deprecated by RFC 7465
-|       Insecure certificate signature (SHA1), score capped at F
-|_  least strength: F
+<img width="378" height="417" alt="image" src="https://github.com/user-attachments/assets/9687fe6a-b965-4452-91cd-7d9fd31f6509" />
+
+Decision: True Positive
+
+The vulnerability was manually validated using Nmap's ssl-enum-ciphers script against the target IP. While the standard web ports (443/8443) were closed, the script discovered that the PostgreSQL database service listening on port 5432 actively accepts handshakes over the deprecated SSLv3 and TLSv1.0 protocols. Furthermore, the manual scan explicitly listed weak ciphers such as TLS_RSA_WITH_3DES_EDE_CBC_SHA (vulnerable to the SWEET32 attack) and TLS_RSA_WITH_RC4_128_SHA (deprecated by RFC 7465 due to 
