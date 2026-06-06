@@ -73,4 +73,28 @@ To ensure findings were true operational risks rather than scanner misinterpreta
 
 Decision: True Positive
 
-The vulnerability was manually validated using Nmap's ssl-enum-ciphers script against the target IP. While the standard web ports (443/8443) were closed, the script discovered that the PostgreSQL database service listening on port 5432 actively accepts handshakes over the deprecated SSLv3 and TLSv1.0 protocols. Furthermore, the manual scan explicitly listed weak ciphers such as TLS_RSA_WITH_3DES_EDE_CBC_SHA (vulnerable to the SWEET32 attack) and TLS_RSA_WITH_RC4_128_SHA (deprecated by RFC 7465 due to 
+The vulnerability was manually validated using Nmap's ssl-enum-ciphers script against the target IP. While the standard web ports (443/8443) were closed, the script discovered that the PostgreSQL database service listening on port 5432 actively accepts handshakes over the deprecated SSLv3 and TLSv1.0 protocols. Furthermore, the manual scan explicitly listed weak ciphers such as TLS_RSA_WITH_3DES_EDE_CBC_SHA (vulnerable to the SWEET32 attack) and TLS_RSA_WITH_RC4_128_SHA (deprecated by RFC 7465 due to structural flaws in the RC4 cipher). Because the service actively negotiates connections using these broken cryptographic primitives and caps the strength score at F, the scanner's original finding is confirmed as a True Positive.
+
+## LAB 4: Advanced (Risk-Based Vulnerability Prioritization)
+
+### 1. Risk Matrix & Environmental Analysis
+
+| No. | Vulnerability | Real-World Risk Factors |
+| :---: | :--- | :--- |
+| **1** | **VNC Server Default Password** | **Exploitability:** Maximum. No exploit code needed; just type `password`. <br>**Impact:** Complete graphical administrative root control.<br>**Exposure:** Wide open on internal lab subnet (Port 5900). |
+| **2** | **UnrealIRCd Backdoor** | **Exploitability:** Extremely High. Automated Metasploit modules exist; requires zero configuration.<br>**Impact:** Immediate command-line root access.<br>**Exposure:** Open on standard IRC port (6667). |
+| **3** | **Apache Tomcat Ghostcat** | **Exploitability:** High. Simple Python script can read arbitrary configuration files.<br>**Impact:** Arbitrary file read (Information disclosure). Full RCE requires a secondary file upload flaw.<br>**Exposure:** Open on AJP port (8009). |
+| **4** | **NFS Exported Share Disclosure** | **Exploitability:** High. Simple native Linux commands (`showmount -e`) can mount the drive.<br>**Impact:** Data exposure. Filesystem access depends on directory permissions.<br>**Exposure:** Open on RPC/NFS ports (2049). |
+| **5** | **SSL V2/V3 Protocols (PostgreSQL)** | **Exploitability:** Low to Medium. Requires a Man-in-the-Middle (MitM) network position to intercept traffic over time.<br>**Impact:** Traffic decryption / Session hijacking.<br>**Exposure:** Bound to the local database connection stream (5432). |
+
+### 2. Remediation Priority Plan
+
+```mermaid
+graph TD
+    A[1. VNC Default Password: Fix < 1 Hour] --> B[2. UnrealIRCd Backdoor: Fix < 24 Hours]
+    B --> C[3. Tomcat Ghostcat: Fix < 72 Hours]
+    C --> D[4. NFS Export Share: Fix < 1 Week]
+    D --> E[5. PostgreSQL SSL V2/V3: Fix < 1 Month]
+
+WHY a Medium CVSS may be more dangerous than a High
+Because the Medium vulnerability is weaponized, trivial to run, and sits directly on high-value data, it poses an immediate operational threat. The high vulnerability, while theoretically devastating, remains unexploitable due to environmental isolation and lack of available tooling. This is why automated severity rankings must always be filtered through a risk analyst's eyes.
