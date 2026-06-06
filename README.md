@@ -4,6 +4,7 @@
 
 **Course Lab Documentation | Vulnerability Assessment Lab** **Target Environment:** Metasploitable2 (`192.168.56.106`)  
 **Attacker Platform:** Kali Linux  
+<img width="467" height="251" alt="image" src="https://github.com/user-attachments/assets/f7d04914-e408-45d2-811b-08dc1e6f3100" />
 
 ---
 
@@ -17,17 +18,8 @@
 ### 2. High-Severity Scan Findings
 The automated scanner identified multiple high-risk flaws across various infrastructure layers:
 
-| Severity | CVSS v3.0 | VPR | EPSS | Plugin ID | Vulnerability Name |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| **CRITICAL** | 9.8 | 9.0 | 0.9728 | 134862 | Apache Tomcat AJP Connector Request Injection (Ghostcat) |
-| **CRITICAL** | 9.8 | *N/A* | *N/A* | 51988 | Bind Shell Backdoor Detection |
-| **CRITICAL** | 9.8 | *N/A* | *N/A* | 20007 | SSL Version 2 and 3 Protocol Detection |
-| **CRITICAL** | 10.0 | *N/A* | *N/A* | 171340 | Apache Tomcat SEOL ($\le$ 5.5.x) |
-| **CRITICAL** | 10.0* | 5.1 | 0.0817 | 32314 | Debian OpenSSH/OpenSSL Package Random Number Generator Weakness |
-| **CRITICAL** | 10.0* | 5.1 | 0.0817 | 32321 | Debian OpenSSH/OpenSSL Package Random Number Generator Weakness (SSL check) |
-| **CRITICAL** | 10.0* | 5.9 | 0.0150 | 11356 | NFS Exported Share Information Disclosure |
-| **CRITICAL** | 10.0* | 7.4 | 0.6495 | 46882 | UnrealIRCd Backdoor Detection |
-| **CRITICAL** | 10.0* | *N/A* | *N/A* | 61708 | VNC Server 'password' Password |
+<img width="562" height="317" alt="image" src="https://github.com/user-attachments/assets/a7802084-c5d9-4f4a-a235-7614503e1194" />
+
 
 ### 3. Top 5 Prioritized Vulnerabilities
 From the raw results, the top 5 vulnerabilities extracted for advanced correlation are:
